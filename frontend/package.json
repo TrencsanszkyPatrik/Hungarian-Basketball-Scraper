@@ -1,0 +1,16 @@
+{
+  "name": "hbasket-scraper-frontend",
+  "version": "1.0.0",
+  "description": "Magyar Kosárlabda Scraper Frontend",
+  "main": "main.js",
+  "scripts": {
+    "start": "live-server --port=3000",
+    "build": "echo 'No build step required'"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.1"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+} 
