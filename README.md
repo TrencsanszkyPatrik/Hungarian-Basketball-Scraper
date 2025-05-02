@@ -6,7 +6,6 @@ A web application for tracking and displaying Hungarian basketball league (NB I/
 
 - Real-time match data display
 - Monthly match grouping
-- Collapsible monthly sections
 - Team and date filtering
 - Match status filtering (upcoming/completed)
 - Detailed match statistics
