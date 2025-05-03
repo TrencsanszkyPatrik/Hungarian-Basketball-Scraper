@@ -8,6 +8,10 @@ import os
 from pathlib import Path
 import locale
 import re
+import json
+from typing import List, Dict, Any, Optional
+import logging
+import traceback
 
 class HunBasketScraper:
     def __init__(self):
@@ -23,6 +27,9 @@ class HunBasketScraper:
         except locale.Error:
             print("Nem sikerült beállítani a magyar lokalizációt, a dátumok kezelése nem lesz pontos")
         self.init_db()
+        self.data_dir = "data"
+        self.setup_logging()
+        self.setup_directories()
 
     def init_db(self):
         """Inicializálja az SQLite adatbázist"""
@@ -380,6 +387,51 @@ class HunBasketScraper:
         
         conn.commit()
         conn.close()
+
+    def setup_logging(self):
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.FileHandler('scraper.log'),
+                logging.StreamHandler()
+            ]
+        )
+        self.logger = logging.getLogger(__name__)
+
+    def setup_directories(self):
+        if not os.path.exists(self.data_dir):
+            os.makedirs(self.data_dir)
+            self.logger.info(f"Created data directory: {self.data_dir}")
+
+    def scrape_all(self):
+        try:
+            self.logger.info("Starting scraping process")
+            
+            standings = self.parse_standings()
+            self.logger.info(f"Scraped {len(standings)} standings entries")
+            
+            regular_season_matches = self.parse_matches(self.regular_season_url)
+            self.logger.info(f"Scraped {len(regular_season_matches)} regular season matches")
+            
+            playoff_matches = self.parse_matches(self.playoff_url)
+            self.logger.info(f"Scraped {len(playoff_matches)} playoff matches")
+            
+            all_matches = regular_season_matches + playoff_matches
+            self.save_to_database(all_matches, standings)
+            
+            self.logger.info("Scraping process completed successfully")
+        except Exception as e:
+            self.logger.error(f"Error in scraping process: {str(e)}")
+
+    def scrape_player_stats(self, url: str, stat_type: str) -> List[Dict[str, Any]]:
+        return []
+
+    def save_player_stats(self, stats: List[Dict[str, Any]], stat_type: str) -> None:
+        pass
+
+    def scrape_all_player_stats(self) -> None:
+        pass
 
 def main():
     scraper = HunBasketScraper()

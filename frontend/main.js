@@ -1,8 +1,6 @@
-// Data storage
 let matches = [];
 let standings = [];
 
-// DOM elements
 let matchesTable = null;
 let standingsTable = null;
 let teamFilter = null;
@@ -10,11 +8,9 @@ let dateFilter = null;
 let statusFilter = null;
 let matchesByMonth = null;
 
-// Chart.js instances
 let winRateChart = null;
 let pointsChart = null;
 
-// Initialization
 document.addEventListener('DOMContentLoaded', () => {
     matchesTable = document.querySelector('#matchesTable');
     standingsTable = document.querySelector('#standingsTable');
@@ -28,14 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
     loadStandings();
 });
 
-// Event listeners setup
 function setupEventListeners() {
     if (teamFilter) teamFilter.addEventListener('change', filterMatches);
     if (dateFilter) dateFilter.addEventListener('change', filterMatches);
     if (statusFilter) statusFilter.addEventListener('change', filterMatches);
 }
 
-// Load standings
 async function loadStandings() {
     try {
         const response = await fetch('http://localhost:5000/api/standings');
@@ -57,7 +51,6 @@ async function loadStandings() {
     }
 }
 
-// Render standings
 function renderStandings(standings) {
     if (!standingsTable) {
         console.error('Standings table not found');
@@ -97,7 +90,6 @@ function renderStandings(standings) {
     addLog(`${standings.length} teams displayed in standings`);
 }
 
-// Load matches
 async function loadMatches() {
     try {
         const response = await fetch('http://localhost:5000/api/matches');
@@ -122,7 +114,6 @@ async function loadMatches() {
     }
 }
 
-// Update team filter
 function updateTeamFilter(matches) {
     if (!teamFilter) {
         console.error('Team filter not found');
@@ -144,7 +135,6 @@ function updateTeamFilter(matches) {
     });
 }
 
-// Update date filter
 function updateDateFilter(matches) {
     if (!dateFilter) {
         console.error('Date filter not found');
@@ -165,7 +155,6 @@ function updateDateFilter(matches) {
     });
 }
 
-// Render matches
 function renderMatches(matches) {
     if (!matchesByMonth) {
         console.error('Matches table not found');
@@ -264,7 +253,6 @@ function renderMatches(matches) {
     });
 }
 
-// Create matches table
 function createMatchesTable(matches) {
     const table = document.createElement('table');
     table.className = 'min-w-full divide-y divide-gray-200';
@@ -275,336 +263,229 @@ function createMatchesTable(matches) {
         <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Home Team</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Away Team</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Result</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Home</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Away</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Venue</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Referees</th>
         </tr>
     `;
     table.appendChild(thead);
-
+    
     const tbody = document.createElement('tbody');
+    tbody.className = 'bg-white divide-y divide-gray-200';
+    
     matches.forEach(match => {
         const row = document.createElement('tr');
         row.className = 'hover:bg-gray-50';
+        
         row.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatDate(match.date)}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${match.time || '-'}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${match.home_team}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${match.away_team}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <td class="px-6 py-4 whitespace-nowrap">${formatDate(match.date)}</td>
+            <td class="px-6 py-4 whitespace-nowrap">${match.time || '-'}</td>
+            <td class="px-6 py-4 whitespace-nowrap">${match.home_team}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
                 ${match.home_score !== null ? `${match.home_score} - ${match.away_score}` : '-'}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${match.venue || '-'}</td>
+            <td class="px-6 py-4 whitespace-nowrap">${match.away_team}</td>
+            <td class="px-6 py-4 whitespace-nowrap">${match.venue || '-'}</td>
+            <td class="px-6 py-4 whitespace-nowrap">${match.referees || '-'}</td>
         `;
+        
         tbody.appendChild(row);
     });
+    
     table.appendChild(tbody);
     return table;
 }
 
-// Helper functions
 function formatDate(dateString) {
-    if (!dateString) return '-';
     const date = new Date(dateString);
-    return date.toLocaleDateString('hu-HU');
+    return date.toLocaleDateString('hu-HU', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
 }
 
 function addLog(message) {
     const logContainer = document.getElementById('logContainer');
-    if (logContainer) {
-        const logDiv = document.createElement('div');
-        logDiv.className = 'text-sm text-gray-600';
-        logDiv.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-        logContainer.appendChild(logDiv);
-        logContainer.scrollTop = logContainer.scrollHeight;
-    }
+    if (!logContainer) return;
+    
+    const logEntry = document.createElement('div');
+    logEntry.className = 'text-sm text-gray-600';
+    logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+    
+    logContainer.appendChild(logEntry);
+    logContainer.scrollTop = logContainer.scrollHeight;
 }
 
 function showError(message) {
     const errorContainer = document.getElementById('errorContainer');
-    if (errorContainer) {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative';
-        errorDiv.innerHTML = `
-            <strong class="font-bold">Error!</strong>
-            <span class="block sm:inline">${message}</span>
-        `;
-        errorContainer.appendChild(errorDiv);
-        setTimeout(() => errorDiv.remove(), 5000);
-    }
-}
-
-// Filter matches
-function filterMatches() {
-    const selectedTeam = teamFilter.value;
-    const selectedDate = dateFilter.value;
-    const selectedStatus = statusFilter.value;
-
-    let filteredMatches = matches;
-
-    if (selectedTeam) {
-        filteredMatches = filteredMatches.filter(match => 
-            match.home_team === selectedTeam || match.away_team === selectedTeam
-        );
-    }
-
-    if (selectedDate) {
-        filteredMatches = filteredMatches.filter(match => 
-            match.date === selectedDate
-        );
-    }
-
-    if (selectedStatus) {
-        filteredMatches = filteredMatches.filter(match => {
-            if (selectedStatus === 'upcoming') {
-                return match.home_score === null;
-            } else if (selectedStatus === 'completed') {
-                return match.home_score !== null;
-            }
-            return true;
-        });
-    }
-
-    renderMatches(filteredMatches);
-    addLog(`${filteredMatches.length} matches displayed after filtering`);
-}
-
-// Update charts
-function updateCharts(filteredMatches = matches) {
-    // Calculate win rates
-    const winRates = calculateWinRates(filteredMatches);
+    if (!errorContainer) return;
     
-    // Destroy existing charts if they exist
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative';
+    errorDiv.innerHTML = `
+        <strong class="font-bold">Error!</strong>
+        <span class="block sm:inline">${message}</span>
+        <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+            <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <title>Close</title>
+                <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+            </svg>
+        </span>
+    `;
+    
+    errorContainer.appendChild(errorDiv);
+    
+    setTimeout(() => {
+        errorDiv.remove();
+    }, 5000);
+}
+
+function filterMatches() {
+    const team = teamFilter.value;
+    const date = dateFilter.value;
+    const status = statusFilter.value;
+    
+    let filteredMatches = matches;
+    
+    if (team) {
+        filteredMatches = filteredMatches.filter(match => 
+            match.home_team === team || match.away_team === team
+        );
+    }
+    
+    if (date) {
+        filteredMatches = filteredMatches.filter(match => match.date === date);
+    }
+    
+    if (status) {
+        if (status === 'upcoming') {
+            filteredMatches = filteredMatches.filter(match => match.home_score === null);
+        } else if (status === 'completed') {
+            filteredMatches = filteredMatches.filter(match => match.home_score !== null);
+        }
+    }
+    
+    renderMatches(filteredMatches);
+    updateCharts(filteredMatches);
+}
+
+function updateCharts(filteredMatches = matches) {
+    const winRates = calculateWinRates(filteredMatches);
+    const pointAverages = calculatePointAverages(filteredMatches);
+    
+    // Win Rate Chart
     if (winRateChart) {
         winRateChart.destroy();
     }
-    if (pointsChart) {
-        pointsChart.destroy();
-    }
     
-    // Create win rate chart
     const winRateCtx = document.getElementById('winRateChart').getContext('2d');
     winRateChart = new Chart(winRateCtx, {
         type: 'bar',
         data: {
-            labels: Object.keys(winRates),
+            labels: winRates.map(team => team.team),
             datasets: [{
                 label: 'Win Rate (%)',
-                data: Object.values(winRates),
-                backgroundColor: 'rgba(59, 130, 246, 0.5)',
-                borderColor: 'rgb(59, 130, 246)',
+                data: winRates.map(team => team.winRate),
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            layout: {
-                padding: {
-                    top: 20,
-                    right: 20,
-                    bottom: 20,
-                    left: 20
-                }
-            },
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 100,
-                    title: {
-                        display: true,
-                        text: 'Win Rate (%)',
-                        font: {
-                            size: 12
-                        }
-                    },
-                    ticks: {
-                        font: {
-                            size: 10
-                        }
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Teams',
-                        font: {
-                            size: 12
-                        }
-                    },
-                    ticks: {
-                        font: {
-                            size: 10
-                        },
-                        maxRotation: 45,
-                        minRotation: 45
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    enabled: true,
-                    callbacks: {
-                        label: function(context) {
-                            return context.parsed.y.toFixed(1) + '%';
-                        }
-                    }
+                    max: 100
                 }
             }
         }
     });
     
-    // Calculate point averages
-    const pointAverages = calculatePointAverages(filteredMatches);
+    // Points Chart
+    if (pointsChart) {
+        pointsChart.destroy();
+    }
     
-    // Create points chart
     const pointsCtx = document.getElementById('pointsChart').getContext('2d');
     pointsChart = new Chart(pointsCtx, {
-        type: 'line',
+        type: 'bar',
         data: {
-            labels: Object.keys(pointAverages),
+            labels: pointAverages.map(team => team.team),
             datasets: [{
-                label: 'Point Average',
-                data: Object.values(pointAverages),
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1,
-                pointBackgroundColor: 'rgb(75, 192, 192)',
-                pointRadius: 4,
-                pointHoverRadius: 6
+                label: 'Points per Game',
+                data: pointAverages.map(team => team.pointsPerGame),
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            layout: {
-                padding: {
-                    top: 20,
-                    right: 20,
-                    bottom: 20,
-                    left: 20
-                }
-            },
             scales: {
                 y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Points per Game',
-                        font: {
-                            size: 12
-                        }
-                    },
-                    ticks: {
-                        font: {
-                            size: 10
-                        }
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Teams',
-                        font: {
-                            size: 12
-                        }
-                    },
-                    ticks: {
-                        font: {
-                            size: 10
-                        },
-                        maxRotation: 45,
-                        minRotation: 45
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    enabled: true,
-                    callbacks: {
-                        label: function(context) {
-                            return context.parsed.y.toFixed(1) + ' points';
-                        }
-                    }
+                    beginAtZero: true
                 }
             }
         }
     });
 }
 
-// Calculate win rates
 function calculateWinRates(matches) {
-    const winRates = {};
     const teamStats = {};
     
-    // Initialize stats for all teams
     matches.forEach(match => {
+        if (match.home_score === null) return;
+        
         if (!teamStats[match.home_team]) {
-            teamStats[match.home_team] = { wins: 0, total: 0 };
+            teamStats[match.home_team] = { wins: 0, games: 0 };
         }
         if (!teamStats[match.away_team]) {
-            teamStats[match.away_team] = { wins: 0, total: 0 };
+            teamStats[match.away_team] = { wins: 0, games: 0 };
+        }
+        
+        teamStats[match.home_team].games++;
+        teamStats[match.away_team].games++;
+        
+        if (match.home_score > match.away_score) {
+            teamStats[match.home_team].wins++;
+        } else {
+            teamStats[match.away_team].wins++;
         }
     });
     
-    // Calculate wins and total games
-    matches.forEach(match => {
-        if (match.home_score !== null && match.away_score !== null) {
-            teamStats[match.home_team].total++;
-            teamStats[match.away_team].total++;
-            
-            if (match.home_score > match.away_score) {
-                teamStats[match.home_team].wins++;
-            } else if (match.home_score < match.away_score) {
-                teamStats[match.away_team].wins++;
-            }
-        }
-    });
-    
-    // Calculate win rates
-    Object.entries(teamStats).forEach(([team, stats]) => {
-        winRates[team] = stats.total > 0 ? (stats.wins / stats.total) * 100 : 0;
-    });
-    
-    return winRates;
+    return Object.entries(teamStats).map(([team, stats]) => ({
+        team,
+        winRate: stats.games > 0 ? (stats.wins / stats.games * 100).toFixed(1) : 0
+    })).sort((a, b) => b.winRate - a.winRate);
 }
 
-// Calculate point averages
 function calculatePointAverages(matches) {
-    const pointAverages = {};
     const teamStats = {};
     
-    // Initialize stats for all teams
     matches.forEach(match => {
+        if (match.home_score === null) return;
+        
         if (!teamStats[match.home_team]) {
-            teamStats[match.home_team] = { total: 0, count: 0 };
+            teamStats[match.home_team] = { points: 0, games: 0 };
         }
         if (!teamStats[match.away_team]) {
-            teamStats[match.away_team] = { total: 0, count: 0 };
+            teamStats[match.away_team] = { points: 0, games: 0 };
         }
+        
+        teamStats[match.home_team].points += match.home_score;
+        teamStats[match.away_team].points += match.away_score;
+        teamStats[match.home_team].games++;
+        teamStats[match.away_team].games++;
     });
     
-    // Calculate points and games
-    matches.forEach(match => {
-        if (match.home_score !== null && match.away_score !== null) {
-            teamStats[match.home_team].total += match.home_score;
-            teamStats[match.home_team].count++;
-            teamStats[match.away_team].total += match.away_score;
-            teamStats[match.away_team].count++;
-        }
-    });
-    
-    // Calculate averages
-    Object.entries(teamStats).forEach(([team, stats]) => {
-        pointAverages[team] = stats.count > 0 ? stats.total / stats.count : 0;
-    });
-    
-    return pointAverages;
+    return Object.entries(teamStats).map(([team, stats]) => ({
+        team,
+        pointsPerGame: stats.games > 0 ? (stats.points / stats.games).toFixed(1) : 0
+    })).sort((a, b) => b.pointsPerGame - a.pointsPerGame);
 } 

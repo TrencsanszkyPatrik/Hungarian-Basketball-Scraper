@@ -1,6 +1,3 @@
-/* Egyedi stílusok a Tailwind CSS kiegészítésére */
-
-/* Animációk */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -10,23 +7,10 @@
     animation: fadeIn 0.5s ease-in;
 }
 
-/* Táblázat sorok hover effektje */
 tbody tr:hover {
     background-color: #f8fafc;
 }
 
-/* Kedvenc csillag stílusa */
-.favorite-star {
-    color: #fbbf24;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.favorite-star:hover {
-    transform: scale(1.2);
-}
-
-/* Mobil nézet optimalizálása */
 @media (max-width: 640px) {
     .container {
         padding-left: 1rem;
@@ -39,7 +23,6 @@ tbody tr:hover {
     }
 }
 
-/* Betöltés animáció */
 .loading {
     position: relative;
 }
@@ -60,29 +43,36 @@ tbody tr:hover {
     100% { transform: translateX(100%); }
 }
 
-/* Alap stílusok */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
 }
 
-/* Táblázat stílusok */
 table {
-    border-collapse: separate;
-    border-spacing: 0;
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 th {
-    position: sticky;
-    top: 0;
-    background-color: #f9fafb;
-    z-index: 10;
+    background-color: #f7fafc;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
 }
 
 tr:hover {
-    background-color: #f3f4f6;
+    background-color: #f8fafc;
 }
 
-/* Modális ablak animáció */
 @keyframes modalFadeIn {
     from {
         opacity: 0;
@@ -98,7 +88,6 @@ tr:hover {
     animation: modalFadeIn 0.3s ease-out;
 }
 
-/* Reszponzív táblázatok */
 @media (max-width: 768px) {
     .overflow-x-auto {
         overflow-x: auto;
@@ -106,7 +95,6 @@ tr:hover {
     }
 }
 
-/* Betöltés indikátor */
 .loading {
     display: inline-block;
     width: 20px;
@@ -123,7 +111,6 @@ tr:hover {
     }
 }
 
-/* Szűrő gombok */
 .filter-button {
     transition: all 0.2s ease-in-out;
 }
@@ -133,14 +120,12 @@ tr:hover {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* Grafikonok konténer */
 .chart-container {
     position: relative;
     height: 300px;
     width: 100%;
 }
 
-/* Hibaüzenetek */
 .error-message {
     background-color: #fee2e2;
     border: 1px solid #ef4444;
@@ -150,7 +135,6 @@ tr:hover {
     margin-bottom: 1rem;
 }
 
-/* Sikerüzenetek */
 .success-message {
     background-color: #dcfce7;
     border: 1px solid #22c55e;
@@ -160,7 +144,6 @@ tr:hover {
     margin-bottom: 1rem;
 }
 
-/* Tabella stílusok */
 .standings-table {
     width: 100%;
     border-collapse: separate;
@@ -369,4 +352,136 @@ tr:hover {
 
 .team-stats p {
     margin: 5px 0;
+}
+
+/* Header styles */
+header {
+    background-color: #1a365d;
+    color: white;
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* Main content styles */
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Filter styles */
+.filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.filter-group select {
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    background-color: white;
+}
+
+/* Log styles */
+.log-container {
+    background-color: #f7fafc;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 2rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.log-entry {
+    font-family: monospace;
+    font-size: 0.875rem;
+    color: #4a5568;
+    margin-bottom: 0.25rem;
+}
+
+/* Error styles */
+.error-container {
+    margin-bottom: 1rem;
+}
+
+.error-message {
+    background-color: #fff5f5;
+    color: #c53030;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid #fed7d7;
+}
+
+/* Month section styles */
+.month-section {
+    margin-bottom: 2rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.month-header {
+    background-color: #f7fafc;
+    padding: 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.month-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.month-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.month-content.expanded {
+    max-height: 2000px;
+}
+
+.toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+.toggle-icon.expanded {
+    transform: rotate(180deg);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .filters {
+        grid-template-columns: 1fr;
+    }
+    
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    th, td {
+        min-width: 120px;
+    }
 } 
