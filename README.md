@@ -38,7 +38,8 @@ A web application for tracking and displaying Hungarian basketball league (NB I/
    ```bash
    python backend/app.py
    ```
-4. Open the frontend/index.html in your browser
+4. Open the frontend
+
 
 ## Project Structure
 
